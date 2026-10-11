@@ -1,10 +1,11 @@
+
 # EventFlow — Event Ticket Booking and Management System
 > **College Relational Database Management Systems (DBMS) Capstone Project**  
 > Built with PostgreSQL 18, Node.js, Express, TypeScript, and React.
 
 ---
 
-## 📌 Project Overview
+## Project Overview
 **EventFlow** is a comprehensive, production-grade event ticket booking and management platform designed specifically for college DBMS demonstrations. It features relational database modeling across **16 normalized core relations** and **2 supporting tables**, implementing:
 - Concurrency-safe seat reservations via row-level locks and 10-minute temporary expiration.
 - Multi-tier ticket pricing scoped strictly to individual event schedules.
@@ -16,7 +17,7 @@
 
 ---
 
-## 🛠️ Technology Stack
+##  Technology Stack
 - **Database:** PostgreSQL 18 (Relational Engine, Identity Columns, Check Constraints, Partial Indexes, Triggers, Views)
 - **Database Driver:** `pg` (node-postgres) with parameterized SQL queries and transaction management
 - **Backend API:** Node.js, Express, TypeScript, Zod, BcryptJS, JSON Web Tokens (JWT)
@@ -39,7 +40,7 @@ All demonstration accounts use the password: **`Password123!`**
 
 ---
 
-## 🚀 Quick Setup & Installation
+##  Quick Setup & Installation
 
 ### 1. Prerequisites
 - **PostgreSQL 18** (or 16+) installed and running locally on port `5432`.
@@ -119,7 +120,7 @@ Navigate to `http://localhost:5173` in your browser.
 
 ---
 
-## 🧪 Automated Testing
+##  Automated Testing
 
 EventFlow includes a test suite covering authentication, concurrency race-conditions, ticket issuance, cancellation refunds, and role authorizations:
 
@@ -136,7 +137,7 @@ npm test
 
 ---
 
-## 📚 College Documentation Files
+##  College Documentation Files
 
 Complete project documentation is available in the `docs/` directory:
 - [`docs/LEARNING_GUIDE.md`](./docs/LEARNING_GUIDE.md) — Step-by-step reproduction guide and college viva question bank.
@@ -147,7 +148,7 @@ Complete project documentation is available in the `docs/` directory:
 
 ---
 
-## 🛡️ Database Quality Highlights
+##  Database Quality Highlights
 1. **Separation of Credentials:** Password hashes are strictly isolated in `user_credential`, never exposing secrets in user queries.
 2. **Partial Unique Indexes:** `idx_active_seat_lock` guarantees at most one active lock per seat per schedule.
 3. **Historical Snapshots:** `booking_seat.price` captures the purchase price at transaction time, preserving financial audit accuracy independently of subsequent price tier changes.
