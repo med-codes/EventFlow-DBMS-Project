@@ -288,25 +288,30 @@ export const CustomerDashboard: React.FC = () => {
                 </div>
               )}
 
-              <form onSubmit={handleSubmitReview} className="flex flex-col gap-3">
-                <div>
-                  <label style={{ fontSize: '0.82rem', fontWeight: 600, display: 'block', marginBottom: '4px' }}>
-                    Select Event:
-                  </label>
-                  <select
-                    className="select"
-                    value={reviewEventId}
-                    onChange={e => setReviewEventId(Number(e.target.value))}
-                    required
-                  >
-                    <option value="">-- Choose Event --</option>
-                    {bookings.filter(b => b.booking_status === 'Confirmed').map(b => (
-                      <option key={b.booking_id} value={b.event_id}>
-                        {b.event_title} (Booking #{b.booking_id})
-                      </option>
-                    ))}
-                  </select>
+              {bookings.filter(b => b.booking_status === 'Confirmed').length === 0 ? (
+                <div style={{ background: 'rgba(99, 102, 241, 0.1)', border: '1px solid #6366f1', color: '#c7d2fe', padding: '14px 16px', borderRadius: '8px', fontSize: '0.85rem', textAlign: 'center' }}>
+                  ℹ️ You do not currently have any <strong>Confirmed bookings</strong>. Once you reserve seats and complete simulated payment for an event, you will be eligible to submit verified reviews!
                 </div>
+              ) : (
+                <form onSubmit={handleSubmitReview} className="flex flex-col gap-3">
+                  <div>
+                    <label style={{ fontSize: '0.82rem', fontWeight: 600, display: 'block', marginBottom: '4px' }}>
+                      Select Event:
+                    </label>
+                    <select
+                      className="select"
+                      value={reviewEventId}
+                      onChange={e => setReviewEventId(Number(e.target.value))}
+                      required
+                    >
+                      <option value="">-- Choose Event --</option>
+                      {bookings.filter(b => b.booking_status === 'Confirmed').map(b => (
+                        <option key={b.booking_id} value={b.event_id}>
+                          {b.event_title} (Booking #{b.booking_id})
+                        </option>
+                      ))}
+                    </select>
+                  </div>
 
                 <div>
                   <label style={{ fontSize: '0.82rem', fontWeight: 600, display: 'block', marginBottom: '4px' }}>
@@ -342,6 +347,7 @@ export const CustomerDashboard: React.FC = () => {
                   Submit Review
                 </button>
               </form>
+              )}
             </div>
           )}
         </>

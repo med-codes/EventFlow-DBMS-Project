@@ -52,12 +52,24 @@ router.post('/', authenticate, async (req: AuthRequest, res: Response, next: Nex
         ? Math.round(totalAmount * (REFUND_PERCENTAGE / 100) * 100) / 100 
         : 0;
 
-      // 2. Insert cancellation record (trigger updates booking and tickets to 'Cancelled')
+      // 2. Insert cancellation record
       const cancelInsert = await client.query(
         `INSERT INTO cancellation (booking_id, cancelled_at, reason, refund_amount, cancellation_status)
          VALUES ($1, CURRENT_TIMESTAMP, $2, $3, 'Processed')
          RETURNING cancellation_id, booking_id, cancelled_at, reason, refund_amount, cancellation_status`,
         [booking_id, reason, refundAmount]
+      );
+
+      // Update booking and tickets status to 'Cancelled'
+      await client.query(
+        `UPDATE booking SET booking_status = 'Cancelled', updated_at = CURRENT_TIMESTAMP WHERE booking_id = $1`,
+        [booking_id]
+      );
+      await client.query(
+        `UPDATE ticket SET ticket_status = 'Cancelled' WHERE booking_seat_id IN (
+           SELECT booking_seat_id FROM booking_seat WHERE booking_id = $1
+         )`,
+        [booking_id]
       );
 
       // 3. If booking was confirmed, record refund in payment table
