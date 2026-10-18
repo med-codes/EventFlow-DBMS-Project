@@ -29,6 +29,12 @@ export const createScheduleSchema = z.object({
   venue_id: z.number().int().positive(),
   start_datetime: z.string().datetime(),
   end_datetime: z.string().datetime(),
+  categories: z.array(
+    z.object({
+      category_name: z.string().min(1, 'Category name is required'),
+      price: z.number().min(0, 'Price must be non-negative'),
+    })
+  ).optional(),
 });
 
 // Create ticket category schema

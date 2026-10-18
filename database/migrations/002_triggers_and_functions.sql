@@ -111,14 +111,14 @@ CREATE TRIGGER trg_validate_review_eligibility
     FOR EACH ROW
     EXECUTE FUNCTION trg_fn_validate_review_eligibility();
 
--- Helper function to expire stale seat locks
+-- Helper function to expire stale seat locks (written in LANGUAGE sql to avoid plpgsql dependency)
 CREATE OR REPLACE FUNCTION fn_cleanup_expired_seat_locks()
 RETURNS INT AS $$
-DECLARE
-    v_count INT;
-BEGIN
-    UPDATE seat_lock SET lock_status = 'Expired' WHERE lock_status = 'Active' AND expires_at < CURRENT_TIMESTAMP;
-    GET DIAGNOSTICS v_count = ROW_COUNT;
-    RETURN v_count;
-END;
-$$ LANGUAGE plpgsql;
+    WITH updated AS (
+        UPDATE seat_lock 
+        SET lock_status = 'Expired' 
+        WHERE lock_status = 'Active' AND expires_at < CURRENT_TIMESTAMP
+        RETURNING 1
+    )
+    SELECT COALESCE(COUNT(*)::INT, 0) FROM updated;
+$$ LANGUAGE sql;

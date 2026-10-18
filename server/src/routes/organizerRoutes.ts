@@ -106,12 +106,57 @@ router.put('/events/:id', async (req: AuthRequest, res: Response, next: NextFunc
   }
 });
 
-// Add schedule to an event
+// List schedules and their ticket categories for an organizer's event
+router.get('/events/:id/schedules', async (req: AuthRequest, res: Response, next: NextFunction) => {
+  try {
+    const eventId = parseInt(req.params.id, 10);
+    const organizerId = req.user!.userId;
+
+    const eventCheck = await query('SELECT organizer_id FROM event WHERE event_id = $1', [eventId]);
+    if (eventCheck.rows.length === 0) {
+      return res.status(404).json({ message: 'Event not found' });
+    }
+    if (eventCheck.rows[0].organizer_id !== organizerId) {
+      return res.status(403).json({ message: 'Forbidden' });
+    }
+
+    const schedulesRes = await query(
+      `SELECT s.schedule_id, s.venue_id, v.venue_name, v.capacity, s.start_datetime, s.end_datetime, s.schedule_status
+       FROM event_schedule s
+       JOIN venue v ON v.venue_id = s.venue_id
+       WHERE s.event_id = $1
+       ORDER BY s.start_datetime ASC`,
+      [eventId]
+    );
+
+    const schedulesWithCats = await Promise.all(
+      schedulesRes.rows.map(async (sch) => {
+        const catRes = await query(
+          `SELECT ticket_category_id, category_name, price
+           FROM ticket_category
+           WHERE schedule_id = $1
+           ORDER BY price ASC`,
+          [sch.schedule_id]
+        );
+        return {
+          ...sch,
+          ticketCategories: catRes.rows,
+        };
+      })
+    );
+
+    res.json({ schedules: schedulesWithCats });
+  } catch (error) {
+    next(error);
+  }
+});
+
+// Add schedule to an event (with automatic ticket categories creation)
 router.post('/events/:id/schedules', async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
     const eventId = parseInt(req.params.id, 10);
     const organizerId = req.user!.userId;
-    const { venue_id, start_datetime, end_datetime } = createScheduleSchema.parse(req.body);
+    const { venue_id, start_datetime, end_datetime, categories } = createScheduleSchema.parse(req.body);
 
     // Verify ownership
     const eventCheck = await query('SELECT organizer_id FROM event WHERE event_id = $1', [eventId]);
@@ -129,9 +174,33 @@ router.post('/events/:id/schedules', async (req: AuthRequest, res: Response, nex
       [eventId, venue_id, start_datetime, end_datetime]
     );
 
+    const newSchedule = result.rows[0];
+
+    // Insert ticket categories
+    const categoriesToInsert = (categories && categories.length > 0)
+      ? categories
+      : [
+          { category_name: 'Standard General', price: 50.00 },
+          { category_name: 'VIP Access', price: 100.00 },
+        ];
+
+    const insertedCategories = [];
+    for (const cat of categoriesToInsert) {
+      const catRes = await query(
+        `INSERT INTO ticket_category (schedule_id, category_name, price)
+         VALUES ($1, $2, $3)
+         RETURNING ticket_category_id, schedule_id, category_name, price`,
+        [newSchedule.schedule_id, cat.category_name, cat.price]
+      );
+      insertedCategories.push(catRes.rows[0]);
+    }
+
     res.status(201).json({
       message: 'Schedule added successfully',
-      schedule: result.rows[0],
+      schedule: {
+        ...newSchedule,
+        ticketCategories: insertedCategories,
+      },
     });
   } catch (error: any) {
     if (error.code === '23P01') {

@@ -82,6 +82,7 @@ export const AdminDashboard: React.FC = () => {
       setCatMsg('Category created successfully!');
       setNewCatName('');
       setNewCatDesc('');
+      loadData();
     } catch (err: any) {
       setCatMsg(`Error: ${err.message}`);
     }

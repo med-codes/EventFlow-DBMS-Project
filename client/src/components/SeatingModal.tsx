@@ -135,6 +135,10 @@ export const SeatingModal: React.FC<SeatingModalProps> = ({ schedule, onClose, o
       setErrorMsg('Please select at least one seat');
       return;
     }
+    if (!ticketCategories || ticketCategories.length === 0) {
+      setErrorMsg('No ticket categories are configured for this schedule. Please contact the organizer.');
+      return;
+    }
 
     try {
       setErrorMsg(null);
@@ -291,32 +295,38 @@ export const SeatingModal: React.FC<SeatingModalProps> = ({ schedule, onClose, o
         {selectedSeatIds.length > 0 && (
           <div style={{ background: 'var(--bg-surface)', border: '1px solid var(--border)', borderRadius: '12px', padding: '16px', marginBottom: '20px' }}>
             <h4 style={{ fontSize: '0.95rem', marginBottom: '10px' }}>Selected Seats & Ticket Pricing</h4>
-            <div className="flex flex-col gap-2">
-              {selectedSeatIds.map(seatId => {
-                const seatObj = seats.find(s => s.seatId === seatId);
-                const currentCatId = seatCategories[seatId] || ticketCategories[0]?.ticket_category_id;
-                return (
-                  <div key={seatId} className="flex items-center justify-between" style={{ fontSize: '0.85rem', borderBottom: '1px solid var(--border)', paddingBottom: '6px' }}>
-                    <span style={{ fontWeight: 600 }}>Seat {seatObj?.seatNumber} ({seatObj?.sectionName})</span>
-                    <select
-                      className="select"
-                      style={{ width: '220px', padding: '6px 10px', fontSize: '0.82rem' }}
-                      value={currentCatId}
-                      onChange={e => {
-                        const val = parseInt(e.target.value, 10);
-                        setSeatCategories(prev => ({ ...prev, [seatId]: val }));
-                      }}
-                    >
-                      {ticketCategories.map(tc => (
-                        <option key={tc.ticket_category_id} value={tc.ticket_category_id}>
-                          {tc.category_name} - ₹{parseFloat(tc.price as string).toFixed(2)}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                );
-              })}
-            </div>
+            {ticketCategories.length === 0 ? (
+              <div style={{ background: 'rgba(239, 68, 68, 0.15)', border: '1px solid rgba(239, 68, 68, 0.3)', color: '#fca5a5', padding: '12px 14px', borderRadius: '8px', fontSize: '0.84rem' }}>
+                ⚠️ No ticket pricing tiers are configured for this schedule yet. Please contact the event organizer to publish ticket categories before booking.
+              </div>
+            ) : (
+              <div className="flex flex-col gap-2">
+                {selectedSeatIds.map(seatId => {
+                  const seatObj = seats.find(s => s.seatId === seatId);
+                  const currentCatId = seatCategories[seatId] || ticketCategories[0]?.ticket_category_id;
+                  return (
+                    <div key={seatId} className="flex items-center justify-between" style={{ fontSize: '0.85rem', borderBottom: '1px solid var(--border)', paddingBottom: '6px' }}>
+                      <span style={{ fontWeight: 600 }}>Seat {seatObj?.seatNumber} ({seatObj?.sectionName})</span>
+                      <select
+                        className="select"
+                        style={{ width: '220px', padding: '6px 10px', fontSize: '0.82rem' }}
+                        value={currentCatId}
+                        onChange={e => {
+                          const val = parseInt(e.target.value, 10);
+                          setSeatCategories(prev => ({ ...prev, [seatId]: val }));
+                        }}
+                      >
+                        {ticketCategories.map(tc => (
+                          <option key={tc.ticket_category_id} value={tc.ticket_category_id}>
+                            {tc.category_name} - ₹{parseFloat(tc.price as string).toFixed(2)}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
           </div>
         )}
 
@@ -337,7 +347,7 @@ export const SeatingModal: React.FC<SeatingModalProps> = ({ schedule, onClose, o
             </button>
             <button
               className="btn btn-primary"
-              disabled={selectedSeatIds.length === 0}
+              disabled={selectedSeatIds.length === 0 || ticketCategories.length === 0}
               onClick={handleProceedToCheckout}
             >
               Proceed to Checkout
