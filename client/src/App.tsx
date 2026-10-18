@@ -11,7 +11,7 @@ import { AuthModal } from './components/AuthModal';
 import { EventItem, EventCategory, EventSchedule, Ticket } from './types';
 import { apiFetch } from './services/api';
 import { useAuth } from './context/AuthContext';
-import { Search, Database, Sparkles, Filter } from 'lucide-react';
+import { Filter } from 'lucide-react';
 
 export const App: React.FC = () => {
   const { user } = useAuth();
@@ -19,7 +19,6 @@ export const App: React.FC = () => {
   const [events, setEvents] = useState<EventItem[]>([]);
   const [categories, setCategories] = useState<EventCategory[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
-  const [searchQuery, setSearchQuery] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(true);
 
   // Modals
@@ -33,7 +32,6 @@ export const App: React.FC = () => {
     try {
       setLoading(true);
       let queryUrl = '/events?';
-      if (searchQuery.trim()) queryUrl += `search=${encodeURIComponent(searchQuery.trim())}&`;
       if (selectedCategory) queryUrl += `category_id=${selectedCategory}&`;
 
       const [eventsData, catsData] = await Promise.all([
@@ -53,11 +51,6 @@ export const App: React.FC = () => {
     loadEvents();
   }, [selectedCategory]);
 
-  const handleSearchSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    loadEvents();
-  };
-
   // Called when booking and payment are completed
   const handleBookingSuccess = async (bookingId: number) => {
     try {
@@ -76,7 +69,7 @@ export const App: React.FC = () => {
   };
 
   return (
-    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
+    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', background: 'var(--bg-primary)' }}>
       <Navbar
         currentTab={currentTab}
         setCurrentTab={setCurrentTab}
@@ -86,51 +79,23 @@ export const App: React.FC = () => {
       {/* Main Content Area */}
       <main style={{ flex: 1 }}>
         {currentTab === 'discover' && (
-          <div>
-            {/* Hero Banner */}
-            <div style={{ 
-              background: 'linear-gradient(180deg, #1e293b 0%, #0f172a 100%)', 
-              borderBottom: '1px solid #334155',
-              padding: '48px 20px 40px'
-            }}>
-              <div className="container" style={{ textAlign: 'center', maxWidth: '800px' }}>
-                <div className="flex items-center justify-center gap-2" style={{ marginBottom: '12px' }}>
-                  <span className="badge badge-indigo">
-                    <Database size={13} style={{ marginRight: '4px' }} /> PostgreSQL 18 Relational DBMS
-                  </span>
+          <div className="container" style={{ padding: '32px 20px 60px' }}>
+            {/* Header & Category Filter Bar */}
+            <div style={{ marginBottom: '28px', borderBottom: '1px solid var(--border)', paddingBottom: '20px' }}>
+              <div className="flex items-center justify-between flex-wrap gap-4" style={{ marginBottom: '16px' }}>
+                <div>
+                  <h1 style={{ fontSize: '1.75rem', fontWeight: 800, letterSpacing: '-0.02em', color: '#ffffff' }}>
+                    Available Events
+                  </h1>
+                  <p style={{ fontSize: '0.9rem', color: 'var(--text-muted)' }}>
+                    Browse upcoming live events, select your preferred seating, and book tickets instantly.
+                  </p>
                 </div>
-                <h1 style={{ fontSize: '2.5rem', fontWeight: 800, marginBottom: '14px', letterSpacing: '-0.02em' }}>
-                  Discover, Reserve & Experience Live Events
-                </h1>
-                <p style={{ fontSize: '1.05rem', color: '#94a3b8', marginBottom: '28px', lineHeight: 1.6 }}>
-                  Built with concurrency-safe seat locking, relational integrity constraints, and multi-tier ticketing.
-                </p>
-
-                {/* Search Bar */}
-                <form onSubmit={handleSearchSubmit} className="flex gap-2" style={{ maxWidth: '600px', margin: '0 auto' }}>
-                  <div style={{ position: 'relative', flex: 1 }}>
-                    <Search size={18} color="#64748b" style={{ position: 'absolute', left: '14px', top: '13px' }} />
-                    <input
-                      type="text"
-                      className="input"
-                      style={{ paddingLeft: '42px', height: '46px' }}
-                      placeholder="Search events by title or keyword..."
-                      value={searchQuery}
-                      onChange={e => setSearchQuery(e.target.value)}
-                    />
-                  </div>
-                  <button type="submit" className="btn btn-primary" style={{ height: '46px', padding: '0 24px' }}>
-                    Search
-                  </button>
-                </form>
               </div>
-            </div>
 
-            {/* Events Discovery Section */}
-            <div className="container" style={{ padding: '36px 20px 60px' }}>
               {/* Category Filter Pills */}
-              <div className="flex items-center gap-2 flex-wrap" style={{ marginBottom: '28px' }}>
-                <span className="flex items-center gap-1" style={{ fontSize: '0.82rem', color: '#64748b', fontWeight: 600, marginRight: '4px' }}>
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className="flex items-center gap-1" style={{ fontSize: '0.82rem', color: 'var(--text-dim)', fontWeight: 600, marginRight: '4px' }}>
                   <Filter size={14} /> Categories:
                 </span>
                 <button
@@ -149,29 +114,29 @@ export const App: React.FC = () => {
                   </button>
                 ))}
               </div>
-
-              {/* Event Cards Grid */}
-              {loading ? (
-                <div style={{ textAlign: 'center', padding: '60px 0' }}>
-                  <p>Loading database events...</p>
-                </div>
-              ) : events.length === 0 ? (
-                <div className="card" style={{ textAlign: 'center', padding: '60px 20px' }}>
-                  <h3 style={{ fontSize: '1.2rem', marginBottom: '8px' }}>No events found</h3>
-                  <p style={{ fontSize: '0.85rem' }}>Try clearing your search query or selecting another category.</p>
-                </div>
-              ) : (
-                <div className="grid grid-cols-3 gap-6">
-                  {events.map(ev => (
-                    <EventCard
-                      key={ev.event_id}
-                      event={ev}
-                      onSelect={evItem => setSelectedEvent(evItem)}
-                    />
-                  ))}
-                </div>
-              )}
             </div>
+
+            {/* Event Cards Grid */}
+            {loading ? (
+              <div style={{ textAlign: 'center', padding: '60px 0' }}>
+                <p>Loading events...</p>
+              </div>
+            ) : events.length === 0 ? (
+              <div className="card" style={{ textAlign: 'center', padding: '60px 20px' }}>
+                <h3 style={{ fontSize: '1.2rem', marginBottom: '8px' }}>No events found</h3>
+                <p style={{ fontSize: '0.85rem' }}>Try selecting another category or check back later.</p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-3 gap-6">
+                {events.map(ev => (
+                  <EventCard
+                    key={ev.event_id}
+                    event={ev}
+                    onSelect={evItem => setSelectedEvent(evItem)}
+                  />
+                ))}
+              </div>
+            )}
           </div>
         )}
 
@@ -181,13 +146,13 @@ export const App: React.FC = () => {
       </main>
 
       {/* Footer */}
-      <footer style={{ background: '#0b1120', borderTop: '1px solid #1e293b', padding: '24px 20px', textAlign: 'center', fontSize: '0.82rem', color: '#64748b' }}>
+      <footer style={{ background: '#09090b', borderTop: '1px solid #27272a', padding: '24px 20px', textAlign: 'center', fontSize: '0.82rem', color: '#71717a' }}>
         <div className="container flex items-center justify-between flex-wrap gap-2">
           <div>
-            <strong>EventFlow</strong> — College DBMS Project (PostgreSQL 18, Node.js Express, React TypeScript)
+            <strong style={{ color: '#f4f4f5' }}>EventFlow</strong> — Live Event Ticketing & Reservation Platform
           </div>
           <div>
-            16 Normalized Core Relations • Row-Level Concurrency Control • Parameterized SQL
+            © 2026 EventFlow. All rights reserved.
           </div>
         </div>
       </footer>

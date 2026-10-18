@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { apiFetch } from '../services/api';
-import { Plus, Calendar, DollarSign, Users, Clock, AlertTriangle, CheckCircle, Tag, ChevronDown, ChevronUp, Trash2, X } from 'lucide-react';
+import { Plus, Calendar, IndianRupee, Users, Clock, Tag, ChevronDown, ChevronUp, X } from 'lucide-react';
 
 const getTomorrowDate = () => {
   const d = new Date();
@@ -43,15 +43,15 @@ export const OrganizerDashboard: React.FC = () => {
 
   // Ticket categories for newly added schedule
   const [scheduleTiers, setScheduleTiers] = useState<Array<{ name: string; price: number }>>([
-    { name: 'Standard General', price: 50 },
-    { name: 'VIP Access', price: 100 },
+    { name: 'Standard General', price: 500 },
+    { name: 'VIP Access', price: 1000 },
   ]);
 
   // Add Ticket Tier Modal (for existing schedule)
   const [selectedScheduleId, setSelectedScheduleId] = useState<number | null>(null);
   const [showCategoryModal, setShowCategoryModal] = useState<boolean>(false);
   const [categoryName, setCategoryName] = useState<string>('Balcony Reserve');
-  const [ticketPrice, setTicketPrice] = useState<number>(75);
+  const [ticketPrice, setTicketPrice] = useState<number>(750);
 
   const [feedbackMsg, setFeedbackMsg] = useState<string | null>(null);
 
@@ -130,7 +130,7 @@ export const OrganizerDashboard: React.FC = () => {
       setTitle('');
       setDescription('');
       loadData();
-      alert('Event submitted for admin approval! (Tip: Use the Admin demo tab to approve it).');
+      alert('Event submitted for admin approval!');
     } catch (err: any) {
       setFeedbackMsg(err.message);
     }
@@ -157,8 +157,8 @@ export const OrganizerDashboard: React.FC = () => {
     setEndMinute('00');
     setEndAmpm('PM');
     setScheduleTiers([
-      { name: 'Standard General', price: 50 },
-      { name: 'VIP Access', price: 100 },
+      { name: 'Standard General', price: 500 },
+      { name: 'VIP Access', price: 1000 },
     ]);
     setFeedbackMsg(null);
     setShowScheduleModal(true);
@@ -235,7 +235,9 @@ export const OrganizerDashboard: React.FC = () => {
       <div className="flex items-center justify-between flex-wrap gap-4" style={{ marginBottom: '24px' }}>
         <div>
           <h1 style={{ fontSize: '1.6rem' }}>Organizer Management Portal</h1>
-          <p style={{ fontSize: '0.9rem' }}>Create events, configure schedules with 12-hour AM/PM times & ticket pricing tiers</p>
+          <p style={{ fontSize: '0.9rem', color: 'var(--text-muted)' }}>
+            Create events, configure schedules with 12-hour AM/PM times, and manage ticket pricing tiers
+          </p>
         </div>
         <button className="btn btn-primary" onClick={() => { if (categories.length === 0) fetchCategories(); setShowCreateModal(true); }}>
           <Plus size={16} /> Create New Event
@@ -245,25 +247,25 @@ export const OrganizerDashboard: React.FC = () => {
       {/* Analytics Summary */}
       <div className="grid grid-cols-3 gap-4" style={{ marginBottom: '30px' }}>
         <div className="card" style={{ padding: '16px' }}>
-          <div className="flex items-center gap-2" style={{ color: '#818cf8', fontSize: '0.8rem', fontWeight: 600 }}>
+          <div className="flex items-center gap-2" style={{ color: 'var(--text-muted)', fontSize: '0.8rem', fontWeight: 600 }}>
             <Calendar size={16} /> Total Events Created
           </div>
           <div style={{ fontSize: '1.8rem', fontWeight: 800, marginTop: '6px' }}>{events.length}</div>
         </div>
 
         <div className="card" style={{ padding: '16px' }}>
-          <div className="flex items-center gap-2" style={{ color: '#34d399', fontSize: '0.8rem', fontWeight: 600 }}>
+          <div className="flex items-center gap-2" style={{ color: 'var(--text-muted)', fontSize: '0.8rem', fontWeight: 600 }}>
             <Users size={16} /> Total Tickets Sold
           </div>
-          <div style={{ fontSize: '1.8rem', fontWeight: 800, marginTop: '6px', color: '#10b981' }}>{totalTickets}</div>
+          <div style={{ fontSize: '1.8rem', fontWeight: 800, marginTop: '6px', color: 'var(--success)' }}>{totalTickets}</div>
         </div>
 
         <div className="card" style={{ padding: '16px' }}>
-          <div className="flex items-center gap-2" style={{ color: '#fbbf24', fontSize: '0.8rem', fontWeight: 600 }}>
-            <DollarSign size={16} /> Total Gross Revenue
+          <div className="flex items-center gap-2" style={{ color: 'var(--text-muted)', fontSize: '0.8rem', fontWeight: 600 }}>
+            <IndianRupee size={16} /> Total Gross Revenue
           </div>
           <div style={{ fontSize: '1.8rem', fontWeight: 800, marginTop: '6px', color: '#fbbf24' }}>
-            ${totalGross.toFixed(2)}
+            ₹{totalGross.toFixed(2)}
           </div>
         </div>
       </div>
@@ -274,11 +276,11 @@ export const OrganizerDashboard: React.FC = () => {
         {loading ? (
           <p>Loading events...</p>
         ) : events.length === 0 ? (
-          <p>No events created yet. Click Create New Event to start.</p>
+          <p style={{ color: 'var(--text-dim)' }}>No events created yet. Click Create New Event to start.</p>
         ) : (
           <div className="flex flex-col gap-4">
             {events.map(ev => (
-              <div key={ev.event_id} className="card" style={{ background: '#0f172a', padding: '18px', border: '1px solid #334155' }}>
+              <div key={ev.event_id} className="card" style={{ background: 'var(--bg-surface)', padding: '18px', border: '1px solid var(--border)' }}>
                 <div className="flex items-center justify-between flex-wrap gap-4">
                   <div style={{ flex: 1 }}>
                     <div className="flex items-center gap-2 flex-wrap" style={{ marginBottom: '6px' }}>
@@ -288,7 +290,7 @@ export const OrganizerDashboard: React.FC = () => {
                       </span>
                       <span className="badge badge-indigo">{ev.category_name}</span>
                     </div>
-                    <p style={{ fontSize: '0.84rem', color: '#cbd5e1', marginBottom: '6px' }}>{ev.description || 'No description provided'}</p>
+                    <p style={{ fontSize: '0.84rem', color: 'var(--text-muted)', marginBottom: '6px' }}>{ev.description || 'No description provided'}</p>
                     
                     {ev.approval_status === 'Pending' && (
                       <div style={{ color: '#fbbf24', fontSize: '0.78rem', background: 'rgba(245, 158, 11, 0.1)', padding: '6px 12px', borderRadius: '6px', border: '1px solid rgba(245, 158, 11, 0.25)', marginTop: '4px' }}>
@@ -296,7 +298,7 @@ export const OrganizerDashboard: React.FC = () => {
                       </div>
                     )}
                     {ev.rejection_reason && (
-                      <div style={{ color: '#f87171', fontSize: '0.78rem', background: 'rgba(239, 68, 68, 0.1)', padding: '6px 10px', borderRadius: '6px', marginTop: '4px' }}>
+                      <div style={{ color: 'var(--danger)', fontSize: '0.78rem', background: 'rgba(239, 68, 68, 0.1)', padding: '6px 10px', borderRadius: '6px', marginTop: '4px' }}>
                         Admin Feedback: {ev.rejection_reason}
                       </div>
                     )}
@@ -323,9 +325,9 @@ export const OrganizerDashboard: React.FC = () => {
 
                 {/* Expanded Schedules Section */}
                 {expandedEventId === ev.event_id && (
-                  <div style={{ marginTop: '16px', borderTop: '1px solid #1e293b', paddingTop: '16px' }}>
+                  <div style={{ marginTop: '16px', borderTop: '1px solid var(--border)', paddingTop: '16px' }}>
                     <div className="flex items-center justify-between" style={{ marginBottom: '12px' }}>
-                      <h4 style={{ fontSize: '0.92rem', color: '#94a3b8', margin: 0 }}>
+                      <h4 style={{ fontSize: '0.92rem', color: 'var(--text-muted)', margin: 0 }}>
                         Event Schedules & Configured Ticket Tiers:
                       </h4>
                       <button
@@ -338,22 +340,22 @@ export const OrganizerDashboard: React.FC = () => {
                     </div>
 
                     {loadingSchedules ? (
-                      <p style={{ fontSize: '0.82rem', color: '#94a3b8' }}>Loading schedules...</p>
+                      <p style={{ fontSize: '0.82rem', color: 'var(--text-dim)' }}>Loading schedules...</p>
                     ) : (!eventSchedules[ev.event_id] || eventSchedules[ev.event_id].length === 0) ? (
-                      <div style={{ background: '#1e293b', padding: '14px', borderRadius: '8px', textAlign: 'center', fontSize: '0.84rem', color: '#94a3b8' }}>
+                      <div style={{ background: 'var(--bg-card)', padding: '14px', borderRadius: '8px', textAlign: 'center', fontSize: '0.84rem', color: 'var(--text-dim)', border: '1px solid var(--border)' }}>
                         No schedules published yet. Click <strong>+ Add Schedule</strong> to add a venue, time, and ticket prices!
                       </div>
                     ) : (
                       <div className="flex flex-col gap-3">
                         {eventSchedules[ev.event_id].map((sch: any) => (
-                          <div key={sch.schedule_id} style={{ background: '#1e293b', padding: '14px 16px', borderRadius: '8px', border: '1px solid #334155' }} className="flex items-center justify-between flex-wrap gap-3">
+                          <div key={sch.schedule_id} style={{ background: 'var(--bg-card)', padding: '14px 16px', borderRadius: '8px', border: '1px solid var(--border)' }} className="flex items-center justify-between flex-wrap gap-3">
                             <div>
                               <div className="flex items-center gap-2" style={{ fontWeight: 700, fontSize: '0.92rem', color: '#fff', marginBottom: '3px' }}>
                                 <span>{sch.venue_name}</span>
-                                <span style={{ color: '#94a3b8', fontSize: '0.78rem', fontWeight: 400 }}>(Capacity: {sch.capacity})</span>
+                                <span style={{ color: 'var(--text-dim)', fontSize: '0.78rem', fontWeight: 400 }}>(Capacity: {sch.capacity})</span>
                               </div>
-                              <div className="flex items-center gap-2" style={{ fontSize: '0.8rem', color: '#cbd5e1', marginBottom: '8px' }}>
-                                <Clock size={13} color="#818cf8" />
+                              <div className="flex items-center gap-2" style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginBottom: '8px' }}>
+                                <Clock size={13} color="#a1a1aa" />
                                 <span>
                                   {new Date(sch.start_datetime).toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' })}
                                   {' • '}
@@ -363,10 +365,10 @@ export const OrganizerDashboard: React.FC = () => {
                                 </span>
                               </div>
                               <div className="flex items-center gap-2 flex-wrap">
-                                <span style={{ fontSize: '0.74rem', color: '#94a3b8', fontWeight: 600 }}>TICKET TIERS:</span>
+                                <span style={{ fontSize: '0.74rem', color: 'var(--text-dim)', fontWeight: 600 }}>TICKET TIERS:</span>
                                 {sch.ticketCategories?.map((tc: any) => (
                                   <span key={tc.ticket_category_id} className="badge badge-green" style={{ fontSize: '0.75rem', padding: '2px 8px' }}>
-                                    {tc.category_name}: ${parseFloat(tc.price).toFixed(2)}
+                                    {tc.category_name}: ₹{parseFloat(tc.price).toFixed(2)}
                                   </span>
                                 ))}
                                 {(!sch.ticketCategories || sch.ticketCategories.length === 0) && (
@@ -381,7 +383,7 @@ export const OrganizerDashboard: React.FC = () => {
                               onClick={() => {
                                 setSelectedScheduleId(sch.schedule_id);
                                 setCategoryName('Standard General');
-                                setTicketPrice(50);
+                                setTicketPrice(500);
                                 setFeedbackMsg(null);
                                 setShowCategoryModal(true);
                               }}
@@ -403,17 +405,17 @@ export const OrganizerDashboard: React.FC = () => {
       {/* Event Categories Reference Directory */}
       <div className="card" style={{ padding: '20px', marginTop: '24px' }}>
         <h3 style={{ fontSize: '1.15rem', marginBottom: '8px' }}>Event Categories Directory</h3>
-        <p style={{ fontSize: '0.85rem', color: '#94a3b8', marginBottom: '16px' }}>
+        <p style={{ fontSize: '0.85rem', color: 'var(--text-dim)', marginBottom: '16px' }}>
           Overview of classifications and scope for organizing events in EventFlow
         </p>
         <div className="grid grid-cols-2 gap-3">
           {categories.map(c => (
-            <div key={c.category_id} style={{ background: '#0f172a', border: '1px solid #334155', borderRadius: '8px', padding: '12px 16px' }}>
+            <div key={c.category_id} style={{ background: 'var(--bg-surface)', border: '1px solid var(--border)', borderRadius: '8px', padding: '12px 16px' }}>
               <div className="flex items-center justify-between" style={{ marginBottom: '4px' }}>
-                <span style={{ fontWeight: 700, color: '#818cf8', fontSize: '0.92rem' }}>{c.category_name}</span>
+                <span style={{ fontWeight: 700, color: 'var(--text-main)', fontSize: '0.92rem' }}>{c.category_name}</span>
                 <span className="badge badge-indigo" style={{ fontSize: '0.68rem' }}>ID #{c.category_id}</span>
               </div>
-              <p style={{ fontSize: '0.82rem', color: '#cbd5e1', margin: 0 }}>
+              <p style={{ fontSize: '0.82rem', color: 'var(--text-muted)', margin: 0 }}>
                 {c.description || 'No description available'}
               </p>
             </div>
@@ -427,7 +429,7 @@ export const OrganizerDashboard: React.FC = () => {
           <div className="modal-content" onClick={e => e.stopPropagation()}>
             <h3 style={{ fontSize: '1.25rem', marginBottom: '16px' }}>Submit New Event</h3>
             {feedbackMsg && (
-              <div style={{ background: 'rgba(239, 68, 68, 0.2)', padding: '10px', borderRadius: '8px', marginBottom: '14px', fontSize: '0.82rem', color: '#fca5a5' }}>
+              <div style={{ background: 'rgba(239, 68, 68, 0.15)', padding: '10px', borderRadius: '8px', marginBottom: '14px', fontSize: '0.82rem', color: '#fca5a5' }}>
                 {feedbackMsg}
               </div>
             )}
@@ -447,11 +449,11 @@ export const OrganizerDashboard: React.FC = () => {
                   const currentCat = categories.find(c => c.category_id === categoryId);
                   if (!currentCat) return null;
                   return (
-                    <div style={{ fontSize: '0.8rem', color: '#cbd5e1', marginTop: '6px', background: 'rgba(99, 102, 241, 0.12)', border: '1px solid rgba(99, 102, 241, 0.3)', padding: '8px 12px', borderRadius: '6px' }}>
-                      <div style={{ fontWeight: 700, color: '#818cf8', marginBottom: '2px' }}>
+                    <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: '6px', background: 'var(--bg-surface)', border: '1px solid var(--border)', padding: '8px 12px', borderRadius: '6px' }}>
+                      <div style={{ fontWeight: 700, color: 'var(--text-main)', marginBottom: '2px' }}>
                         Category Details ({currentCat.category_name}):
                       </div>
-                      <div style={{ color: '#94a3b8' }}>
+                      <div style={{ color: 'var(--text-dim)' }}>
                         {currentCat.description || 'No description provided for this category.'}
                       </div>
                     </div>
@@ -495,7 +497,7 @@ export const OrganizerDashboard: React.FC = () => {
       {showScheduleModal && (
         <div className="modal-overlay" onClick={() => setShowScheduleModal(false)}>
           <div className="modal-content" onClick={e => e.stopPropagation()} style={{ maxWidth: '580px' }}>
-            <div className="flex items-center justify-between" style={{ marginBottom: '14px', borderBottom: '1px solid #334155', paddingBottom: '10px' }}>
+            <div className="flex items-center justify-between" style={{ marginBottom: '14px', borderBottom: '1px solid var(--border)', paddingBottom: '10px' }}>
               <h3 style={{ fontSize: '1.25rem', margin: 0 }}>Add Event Schedule</h3>
               <button className="btn btn-outline btn-sm" onClick={() => setShowScheduleModal(false)}>
                 <X size={16} />
@@ -503,7 +505,7 @@ export const OrganizerDashboard: React.FC = () => {
             </div>
 
             {feedbackMsg && (
-              <div style={{ background: 'rgba(239, 68, 68, 0.2)', border: '1px solid #ef4444', padding: '10px', borderRadius: '8px', marginBottom: '14px', fontSize: '0.82rem', color: '#fca5a5' }}>
+              <div style={{ background: 'rgba(239, 68, 68, 0.15)', border: '1px solid rgba(239, 68, 68, 0.3)', padding: '10px', borderRadius: '8px', marginBottom: '14px', fontSize: '0.82rem', color: '#fca5a5' }}>
                 {feedbackMsg}
               </div>
             )}
@@ -519,13 +521,13 @@ export const OrganizerDashboard: React.FC = () => {
               </div>
 
               {/* Start Date & Time with explicit 12-hour format & AM / PM */}
-              <div style={{ background: '#0f172a', padding: '12px 14px', borderRadius: '8px', border: '1px solid #334155' }}>
-                <label style={{ fontSize: '0.84rem', fontWeight: 700, display: 'block', marginBottom: '8px', color: '#818cf8' }}>
+              <div style={{ background: 'var(--bg-surface)', padding: '12px 14px', borderRadius: '8px', border: '1px solid var(--border)' }}>
+                <label style={{ fontSize: '0.84rem', fontWeight: 700, display: 'block', marginBottom: '8px', color: 'var(--text-main)' }}>
                   Start Date & Time (12-Hour Format with AM / PM):
                 </label>
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <span style={{ fontSize: '0.72rem', color: '#94a3b8', display: 'block', marginBottom: '3px' }}>Start Date:</span>
+                    <span style={{ fontSize: '0.72rem', color: 'var(--text-dim)', display: 'block', marginBottom: '3px' }}>Start Date:</span>
                     <input
                       type="date"
                       className="input"
@@ -535,14 +537,14 @@ export const OrganizerDashboard: React.FC = () => {
                     />
                   </div>
                   <div>
-                    <span style={{ fontSize: '0.72rem', color: '#94a3b8', display: 'block', marginBottom: '3px' }}>Time (Hour : Min : AM/PM):</span>
+                    <span style={{ fontSize: '0.72rem', color: 'var(--text-dim)', display: 'block', marginBottom: '3px' }}>Time (Hour : Min : AM/PM):</span>
                     <div className="flex gap-1">
                       <select className="select flex-1" value={startHour} onChange={e => setStartHour(e.target.value)}>
                         {hoursList.map(h => (
                           <option key={h} value={h}>{h}</option>
                         ))}
                       </select>
-                      <span style={{ alignSelf: 'center', fontWeight: 700, color: '#94a3b8' }}>:</span>
+                      <span style={{ alignSelf: 'center', fontWeight: 700, color: 'var(--text-dim)' }}>:</span>
                       <select className="select flex-1" value={startMinute} onChange={e => setStartMinute(e.target.value)}>
                         {minutesList.map(m => (
                           <option key={m} value={m}>{m}</option>
@@ -550,7 +552,7 @@ export const OrganizerDashboard: React.FC = () => {
                       </select>
                       <select
                         className="select"
-                        style={{ width: '80px', fontWeight: 800, color: startAmpm === 'AM' ? '#38bdf8' : '#f59e0b', background: '#1e293b' }}
+                        style={{ width: '80px', fontWeight: 800, color: startAmpm === 'AM' ? '#38bdf8' : '#f59e0b', background: 'var(--bg-card)' }}
                         value={startAmpm}
                         onChange={e => setStartAmpm(e.target.value as 'AM' | 'PM')}
                       >
@@ -563,13 +565,13 @@ export const OrganizerDashboard: React.FC = () => {
               </div>
 
               {/* End Date & Time with explicit 12-hour format & AM / PM */}
-              <div style={{ background: '#0f172a', padding: '12px 14px', borderRadius: '8px', border: '1px solid #334155' }}>
-                <label style={{ fontSize: '0.84rem', fontWeight: 700, display: 'block', marginBottom: '8px', color: '#818cf8' }}>
+              <div style={{ background: 'var(--bg-surface)', padding: '12px 14px', borderRadius: '8px', border: '1px solid var(--border)' }}>
+                <label style={{ fontSize: '0.84rem', fontWeight: 700, display: 'block', marginBottom: '8px', color: 'var(--text-main)' }}>
                   End Date & Time (12-Hour Format with AM / PM):
                 </label>
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <span style={{ fontSize: '0.72rem', color: '#94a3b8', display: 'block', marginBottom: '3px' }}>End Date:</span>
+                    <span style={{ fontSize: '0.72rem', color: 'var(--text-dim)', display: 'block', marginBottom: '3px' }}>End Date:</span>
                     <input
                       type="date"
                       className="input"
@@ -579,14 +581,14 @@ export const OrganizerDashboard: React.FC = () => {
                     />
                   </div>
                   <div>
-                    <span style={{ fontSize: '0.72rem', color: '#94a3b8', display: 'block', marginBottom: '3px' }}>Time (Hour : Min : AM/PM):</span>
+                    <span style={{ fontSize: '0.72rem', color: 'var(--text-dim)', display: 'block', marginBottom: '3px' }}>Time (Hour : Min : AM/PM):</span>
                     <div className="flex gap-1">
                       <select className="select flex-1" value={endHour} onChange={e => setEndHour(e.target.value)}>
                         {hoursList.map(h => (
                           <option key={h} value={h}>{h}</option>
                         ))}
                       </select>
-                      <span style={{ alignSelf: 'center', fontWeight: 700, color: '#94a3b8' }}>:</span>
+                      <span style={{ alignSelf: 'center', fontWeight: 700, color: 'var(--text-dim)' }}>:</span>
                       <select className="select flex-1" value={endMinute} onChange={e => setEndMinute(e.target.value)}>
                         {minutesList.map(m => (
                           <option key={m} value={m}>{m}</option>
@@ -594,7 +596,7 @@ export const OrganizerDashboard: React.FC = () => {
                       </select>
                       <select
                         className="select"
-                        style={{ width: '80px', fontWeight: 800, color: endAmpm === 'AM' ? '#38bdf8' : '#f59e0b', background: '#1e293b' }}
+                        style={{ width: '80px', fontWeight: 800, color: endAmpm === 'AM' ? '#38bdf8' : '#f59e0b', background: 'var(--bg-card)' }}
                         value={endAmpm}
                         onChange={e => setEndAmpm(e.target.value as 'AM' | 'PM')}
                       >
@@ -607,21 +609,21 @@ export const OrganizerDashboard: React.FC = () => {
               </div>
 
               {/* Ticket Pricing Tiers Section */}
-              <div style={{ background: '#0f172a', padding: '12px 14px', borderRadius: '8px', border: '1px solid #334155' }}>
+              <div style={{ background: 'var(--bg-surface)', padding: '12px 14px', borderRadius: '8px', border: '1px solid var(--border)' }}>
                 <div className="flex items-center justify-between" style={{ marginBottom: '8px' }}>
-                  <label style={{ fontSize: '0.84rem', fontWeight: 700, color: '#34d399' }}>
+                  <label style={{ fontSize: '0.84rem', fontWeight: 700, color: 'var(--success)' }}>
                     Ticket Categories & Pricing (Tiers)
                   </label>
                   <button
                     type="button"
                     className="btn btn-outline btn-sm"
                     style={{ fontSize: '0.74rem', padding: '3px 8px' }}
-                    onClick={() => setScheduleTiers(prev => [...prev, { name: 'Tier ' + (prev.length + 1), price: 60 }])}
+                    onClick={() => setScheduleTiers(prev => [...prev, { name: 'Tier ' + (prev.length + 1), price: 600 }])}
                   >
                     + Add Tier
                   </button>
                 </div>
-                <p style={{ fontSize: '0.74rem', color: '#94a3b8', marginBottom: '10px' }}>
+                <p style={{ fontSize: '0.74rem', color: 'var(--text-dim)', marginBottom: '10px' }}>
                   Attendees will choose from these tiers when picking their seats.
                 </p>
                 <div className="flex flex-col gap-2">
@@ -640,8 +642,8 @@ export const OrganizerDashboard: React.FC = () => {
                         }}
                         required
                       />
-                      <div style={{ display: 'flex', alignItems: 'center', width: '120px' }}>
-                        <span style={{ marginRight: '6px', color: '#10b981', fontWeight: 800 }}>$</span>
+                      <div style={{ display: 'flex', alignItems: 'center', width: '130px' }}>
+                        <span style={{ marginRight: '6px', color: 'var(--success)', fontWeight: 800 }}>₹</span>
                         <input
                           type="number"
                           min="0"
@@ -662,7 +664,7 @@ export const OrganizerDashboard: React.FC = () => {
                         <button
                           type="button"
                           className="btn btn-outline btn-sm"
-                          style={{ padding: '4px 8px', color: '#f87171', borderColor: '#ef4444' }}
+                          style={{ padding: '4px 8px', color: 'var(--danger)', borderColor: 'var(--danger)' }}
                           onClick={() => setScheduleTiers(prev => prev.filter((_, i) => i !== idx))}
                           title="Remove Tier"
                         >
@@ -687,7 +689,7 @@ export const OrganizerDashboard: React.FC = () => {
       {showCategoryModal && (
         <div className="modal-overlay" onClick={() => setShowCategoryModal(false)}>
           <div className="modal-content" onClick={e => e.stopPropagation()} style={{ maxWidth: '440px' }}>
-            <div className="flex items-center justify-between" style={{ marginBottom: '14px', borderBottom: '1px solid #334155', paddingBottom: '10px' }}>
+            <div className="flex items-center justify-between" style={{ marginBottom: '14px', borderBottom: '1px solid var(--border)', paddingBottom: '10px' }}>
               <h3 style={{ fontSize: '1.25rem', margin: 0 }}>Add Ticket Pricing Tier</h3>
               <button className="btn btn-outline btn-sm" onClick={() => setShowCategoryModal(false)}>
                 <X size={16} />
@@ -695,7 +697,7 @@ export const OrganizerDashboard: React.FC = () => {
             </div>
 
             {feedbackMsg && (
-              <div style={{ background: 'rgba(239, 68, 68, 0.2)', border: '1px solid #ef4444', padding: '10px', borderRadius: '8px', marginBottom: '14px', fontSize: '0.82rem', color: '#fca5a5' }}>
+              <div style={{ background: 'rgba(239, 68, 68, 0.15)', border: '1px solid rgba(239, 68, 68, 0.3)', padding: '10px', borderRadius: '8px', marginBottom: '14px', fontSize: '0.82rem', color: '#fca5a5' }}>
                 {feedbackMsg}
               </div>
             )}
@@ -714,9 +716,9 @@ export const OrganizerDashboard: React.FC = () => {
               </div>
 
               <div>
-                <label style={{ fontSize: '0.82rem', fontWeight: 600, display: 'block', marginBottom: '4px' }}>Price (USD $):</label>
+                <label style={{ fontSize: '0.82rem', fontWeight: 600, display: 'block', marginBottom: '4px' }}>Price (₹):</label>
                 <div style={{ display: 'flex', alignItems: 'center' }}>
-                  <span style={{ marginRight: '8px', color: '#10b981', fontWeight: 800, fontSize: '1.1rem' }}>$</span>
+                  <span style={{ marginRight: '8px', color: 'var(--success)', fontWeight: 800, fontSize: '1.1rem' }}>₹</span>
                   <input
                     type="number"
                     min="0"

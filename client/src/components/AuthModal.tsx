@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { X, Lock, Mail, User as UserIcon, Phone } from 'lucide-react';
+import { X } from 'lucide-react';
 
 interface AuthModalProps {
   onClose: () => void;
@@ -38,7 +38,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ onClose }) => {
   return (
     <div className="modal-overlay" onClick={onClose}>
       <div className="modal-content" onClick={e => e.stopPropagation()} style={{ maxWidth: '420px' }}>
-        <div className="flex items-center justify-between" style={{ marginBottom: '16px', borderBottom: '1px solid #334155', paddingBottom: '12px' }}>
+        <div className="flex items-center justify-between" style={{ marginBottom: '16px', borderBottom: '1px solid var(--border)', paddingBottom: '12px' }}>
           <h3 style={{ fontSize: '1.25rem' }}>{isLogin ? 'Sign In to EventFlow' : 'Create Account'}</h3>
           <button className="btn btn-outline btn-sm" onClick={onClose}>
             <X size={16} />
@@ -46,7 +46,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ onClose }) => {
         </div>
 
         {errorMsg && (
-          <div style={{ background: 'rgba(239, 68, 68, 0.2)', border: '1px solid #ef4444', color: '#fca5a5', padding: '10px', borderRadius: '8px', marginBottom: '16px', fontSize: '0.82rem' }}>
+          <div style={{ background: 'rgba(239, 68, 68, 0.15)', border: '1px solid rgba(239, 68, 68, 0.3)', color: '#fca5a5', padding: '10px', borderRadius: '8px', marginBottom: '16px', fontSize: '0.82rem' }}>
             {errorMsg}
           </div>
         )}
@@ -83,7 +83,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ onClose }) => {
                 <input
                   type="text"
                   className="input"
-                  placeholder="+1-555-0100"
+                  placeholder="+91-98765-43210"
                   value={phone}
                   onChange={e => setPhone(e.target.value)}
                 />
@@ -118,12 +118,12 @@ export const AuthModal: React.FC<AuthModalProps> = ({ onClose }) => {
           </button>
         </form>
 
-        <div style={{ textAlign: 'center', marginTop: '16px', fontSize: '0.82rem', color: '#94a3b8' }}>
+        <div style={{ textAlign: 'center', marginTop: '16px', fontSize: '0.82rem', color: 'var(--text-muted)' }}>
           {isLogin ? (
             <span>
               Don't have an account?{' '}
               <button
-                style={{ background: 'none', border: 'none', color: '#818cf8', fontWeight: 600, cursor: 'pointer' }}
+                style={{ background: 'none', border: 'none', color: '#ffffff', fontWeight: 600, cursor: 'pointer', textDecoration: 'underline' }}
                 onClick={() => { setIsLogin(false); setEmail(''); setPassword(''); }}
               >
                 Sign Up
@@ -133,7 +133,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ onClose }) => {
             <span>
               Already have an account?{' '}
               <button
-                style={{ background: 'none', border: 'none', color: '#818cf8', fontWeight: 600, cursor: 'pointer' }}
+                style={{ background: 'none', border: 'none', color: '#ffffff', fontWeight: 600, cursor: 'pointer', textDecoration: 'underline' }}
                 onClick={() => { setIsLogin(true); setEmail('customer@eventflow.dev'); setPassword('Password123!'); }}
               >
                 Sign In

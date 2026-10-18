@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Booking, Ticket, WaitlistEntry } from '../types';
 import { apiFetch } from '../services/api';
 import { PrintTicketModal } from './PrintTicketModal';
-import { Ticket as TicketIcon, Calendar, Clock, MapPin, Printer, Ban, Star, AlertCircle, CheckCircle2 } from 'lucide-react';
+import { Ticket as TicketIcon, Calendar, Clock, MapPin, Printer, Ban, Star } from 'lucide-react';
 
 export const CustomerDashboard: React.FC = () => {
   const [subTab, setSubTab] = useState<'tickets' | 'bookings' | 'waitlist' | 'review'>('tickets');
@@ -56,7 +56,7 @@ export const CustomerDashboard: React.FC = () => {
           reason: cancelReason || 'Personal cancellation',
         }),
       });
-      alert(`Booking #${cancellingBooking.booking_id} cancelled. Refund of $${parseFloat(data.cancellation.refund_amount).toFixed(2)} recorded.`);
+      alert(`Booking #${cancellingBooking.booking_id} cancelled. Refund of ₹${parseFloat(data.cancellation.refund_amount).toFixed(2)} recorded.`);
       setCancellingBooking(null);
       setCancelReason('');
       loadData();
@@ -79,7 +79,7 @@ export const CustomerDashboard: React.FC = () => {
     if (!reviewEventId) return;
     try {
       setReviewMsg(null);
-      const data = await apiFetch('/reviews', {
+      await apiFetch('/reviews', {
         method: 'POST',
         body: JSON.stringify({
           event_id: Number(reviewEventId),
@@ -99,12 +99,12 @@ export const CustomerDashboard: React.FC = () => {
       <div className="flex items-center justify-between" style={{ marginBottom: '24px' }}>
         <div>
           <h1 style={{ fontSize: '1.6rem' }}>Customer Dashboard</h1>
-          <p style={{ fontSize: '0.9rem' }}>Manage your booked admissions, payments, tickets, and reviews</p>
+          <p style={{ fontSize: '0.9rem', color: 'var(--text-muted)' }}>Manage your booked admissions, payments, tickets, and reviews</p>
         </div>
       </div>
 
       {/* Sub Tabs */}
-      <div className="flex gap-2" style={{ borderBottom: '1px solid #334155', paddingBottom: '12px', marginBottom: '24px' }}>
+      <div className="flex gap-2" style={{ borderBottom: '1px solid var(--border)', paddingBottom: '12px', marginBottom: '24px' }}>
         <button
           className={`btn btn-sm ${subTab === 'tickets' ? 'btn-primary' : 'btn-outline'}`}
           onClick={() => setSubTab('tickets')}
@@ -151,24 +151,24 @@ export const CustomerDashboard: React.FC = () => {
                           <span className={`badge ${t.ticket_status === 'Valid' ? 'badge-green' : t.ticket_status === 'Used' ? 'badge-gray' : 'badge-red'}`}>
                             {t.ticket_status}
                           </span>
-                          <span style={{ fontSize: '0.78rem', color: '#94a3b8', fontFamily: 'monospace' }}>
+                          <span style={{ fontSize: '0.78rem', color: 'var(--text-dim)', fontFamily: 'monospace' }}>
                             {t.ticket_code}
                           </span>
                         </div>
                         <h3 style={{ fontSize: '1.15rem', marginBottom: '6px' }}>{t.event_title}</h3>
-                        <div className="flex items-center gap-2" style={{ fontSize: '0.82rem', color: '#cbd5e1', marginBottom: '4px' }}>
-                          <MapPin size={14} color="#10b981" />
+                        <div className="flex items-center gap-2" style={{ fontSize: '0.82rem', color: 'var(--text-muted)', marginBottom: '4px' }}>
+                          <MapPin size={14} color="var(--success)" />
                           <span>{t.venue_name} • {t.section_name} (Seat {t.seat_number})</span>
                         </div>
-                        <div className="flex items-center gap-2" style={{ fontSize: '0.82rem', color: '#94a3b8' }}>
-                          <Calendar size={14} color="#818cf8" />
+                        <div className="flex items-center gap-2" style={{ fontSize: '0.82rem', color: 'var(--text-dim)' }}>
+                          <Calendar size={14} color="#a1a1aa" />
                           <span>{new Date(t.start_datetime).toLocaleDateString()} at {new Date(t.start_datetime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
                         </div>
                       </div>
 
-                      <div style={{ borderTop: '1px solid #334155', paddingTop: '12px', marginTop: '16px' }} className="flex items-center justify-between">
-                        <span style={{ fontWeight: 700, color: '#10b981' }}>
-                          ${parseFloat(t.ticket_price as string).toFixed(2)}
+                      <div style={{ borderTop: '1px solid var(--border)', paddingTop: '12px', marginTop: '16px' }} className="flex items-center justify-between">
+                        <span style={{ fontWeight: 700, color: 'var(--success)' }}>
+                          ₹{parseFloat(t.ticket_price as string).toFixed(2)}
                         </span>
                         <button className="btn btn-outline btn-sm" onClick={() => setSelectedTicket(t)}>
                           <Printer size={14} /> View & Print Pass
@@ -202,21 +202,21 @@ export const CustomerDashboard: React.FC = () => {
                             <span className="badge badge-indigo">Payment: {b.payment_status}</span>
                           )}
                         </div>
-                        <div style={{ fontSize: '0.9rem', color: '#cbd5e1', fontWeight: 600 }}>{b.event_title}</div>
-                        <div style={{ fontSize: '0.8rem', color: '#94a3b8' }}>
+                        <div style={{ fontSize: '0.9rem', color: 'var(--text-main)', fontWeight: 600 }}>{b.event_title}</div>
+                        <div style={{ fontSize: '0.8rem', color: 'var(--text-dim)' }}>
                           {new Date(b.start_datetime).toLocaleDateString()} • {b.venue_name} • {b.total_seats} seat(s)
                         </div>
                       </div>
 
                       <div className="flex items-center gap-4">
                         <div style={{ textAlign: 'right' }}>
-                          <div style={{ fontSize: '0.75rem', color: '#94a3b8' }}>Total Amount</div>
-                          <div style={{ fontSize: '1.15rem', fontWeight: 800, color: '#10b981' }}>
-                            ${parseFloat(b.total_amount as string).toFixed(2)}
+                          <div style={{ fontSize: '0.75rem', color: 'var(--text-dim)' }}>Total Amount</div>
+                          <div style={{ fontSize: '1.15rem', fontWeight: 800, color: 'var(--success)' }}>
+                            ₹{parseFloat(b.total_amount as string).toFixed(2)}
                           </div>
                           {b.refund_amount && (
-                            <div style={{ fontSize: '0.72rem', color: '#f87171' }}>
-                              Refunded: ${parseFloat(b.refund_amount as string).toFixed(2)}
+                            <div style={{ fontSize: '0.72rem', color: 'var(--danger)' }}>
+                              Refunded: ₹{parseFloat(b.refund_amount as string).toFixed(2)}
                             </div>
                           )}
                         </div>
@@ -224,7 +224,7 @@ export const CustomerDashboard: React.FC = () => {
                         {b.booking_status === 'Confirmed' && (
                           <button
                             className="btn btn-outline btn-sm"
-                            style={{ borderColor: '#ef4444', color: '#f87171' }}
+                            style={{ borderColor: 'var(--danger)', color: 'var(--danger)' }}
                             onClick={() => setCancellingBooking(b)}
                           >
                             <Ban size={14} /> Cancel Booking
@@ -256,7 +256,7 @@ export const CustomerDashboard: React.FC = () => {
                           </span>
                         </div>
                         <h3 style={{ fontSize: '1.05rem', marginBottom: '4px' }}>{w.event_title}</h3>
-                        <p style={{ fontSize: '0.82rem' }}>
+                        <p style={{ fontSize: '0.82rem', color: 'var(--text-muted)' }}>
                           {new Date(w.start_datetime).toLocaleDateString()} • {w.venue_name}
                         </p>
                       </div>
@@ -278,12 +278,12 @@ export const CustomerDashboard: React.FC = () => {
           {subTab === 'review' && (
             <div className="card" style={{ maxWidth: '600px', margin: '0 auto', padding: '24px' }}>
               <h2 style={{ fontSize: '1.25rem', marginBottom: '8px' }}>Leave Event Review</h2>
-              <p style={{ fontSize: '0.85rem', marginBottom: '16px' }}>
-                Note: In accordance with EventFlow database rules, you are eligible to review events that you possess a confirmed booking for.
+              <p style={{ fontSize: '0.85rem', marginBottom: '16px', color: 'var(--text-muted)' }}>
+                You can review events that you possess a confirmed booking for.
               </p>
 
               {reviewMsg && (
-                <div style={{ background: reviewMsg.startsWith('Error') ? 'rgba(239, 68, 68, 0.2)' : 'rgba(16, 185, 129, 0.2)', padding: '10px', borderRadius: '8px', marginBottom: '16px', fontSize: '0.85rem' }}>
+                <div style={{ background: reviewMsg.startsWith('Error') ? 'rgba(239, 68, 68, 0.15)' : 'rgba(34, 197, 94, 0.15)', border: '1px solid var(--border)', padding: '10px', borderRadius: '8px', marginBottom: '16px', fontSize: '0.85rem', color: reviewMsg.startsWith('Error') ? '#fca5a5' : '#86efac' }}>
                   {reviewMsg}
                 </div>
               )}
@@ -362,17 +362,17 @@ export const CustomerDashboard: React.FC = () => {
       {cancellingBooking && (
         <div className="modal-overlay" onClick={() => setCancellingBooking(null)}>
           <div className="modal-content" onClick={e => e.stopPropagation()} style={{ maxWidth: '480px' }}>
-            <h3 style={{ fontSize: '1.2rem', marginBottom: '12px', color: '#f87171' }}>
+            <h3 style={{ fontSize: '1.2rem', marginBottom: '12px', color: 'var(--danger)' }}>
               Confirm Booking Cancellation
             </h3>
-            <p style={{ fontSize: '0.85rem', marginBottom: '14px', lineHeight: 1.5 }}>
+            <p style={{ fontSize: '0.85rem', marginBottom: '14px', lineHeight: 1.5, color: 'var(--text-muted)' }}>
               Are you sure you want to cancel Booking #{cancellingBooking.booking_id}?
-              Under our college DBMS cancellation policy, an <strong>80% refund</strong> of $
-              {(parseFloat(cancellingBooking.total_amount as string) * 0.8).toFixed(2)} will be simulated, and associated tickets will be revoked.
+              Under our cancellation policy, an <strong>80% refund</strong> of ₹
+              {(parseFloat(cancellingBooking.total_amount as string) * 0.8).toFixed(2)} will be recorded, and associated tickets will be revoked.
             </p>
 
             {cancelMsg && (
-              <div style={{ background: 'rgba(239, 68, 68, 0.2)', padding: '10px', borderRadius: '8px', marginBottom: '12px', fontSize: '0.82rem' }}>
+              <div style={{ background: 'rgba(239, 68, 68, 0.15)', padding: '10px', borderRadius: '8px', marginBottom: '12px', fontSize: '0.82rem', color: '#fca5a5' }}>
                 {cancelMsg}
               </div>
             )}
@@ -384,7 +384,7 @@ export const CustomerDashboard: React.FC = () => {
               <input
                 type="text"
                 className="input"
-                placeholder="e.g. Schedule clash with exams"
+                placeholder="e.g. Schedule clash"
                 value={cancelReason}
                 onChange={e => setCancelReason(e.target.value)}
               />

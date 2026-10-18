@@ -52,7 +52,7 @@ export const EventDetailsModal: React.FC<EventDetailsModalProps> = ({ event, onC
     <div className="modal-overlay" onClick={onClose}>
       <div className="modal-content" onClick={e => e.stopPropagation()} style={{ maxWidth: '750px' }}>
         {/* Header */}
-        <div className="flex items-center justify-between" style={{ marginBottom: '16px', borderBottom: '1px solid #334155', paddingBottom: '12px' }}>
+        <div className="flex items-center justify-between" style={{ marginBottom: '16px', borderBottom: '1px solid var(--border)', paddingBottom: '12px' }}>
           <div>
             <span className="badge badge-indigo" style={{ marginBottom: '6px' }}>{event.category_name}</span>
             <h2 style={{ fontSize: '1.4rem' }}>{event.title}</h2>
@@ -63,10 +63,10 @@ export const EventDetailsModal: React.FC<EventDetailsModalProps> = ({ event, onC
         </div>
 
         {/* Event description */}
-        <p style={{ marginBottom: '20px', lineHeight: 1.6 }}>{event.description}</p>
+        <p style={{ marginBottom: '20px', lineHeight: 1.6, color: 'var(--text-muted)' }}>{event.description}</p>
 
         {waitlistMsg && (
-          <div style={{ background: 'rgba(99, 102, 241, 0.2)', border: '1px solid #6366f1', color: '#c7d2fe', padding: '10px 14px', borderRadius: '8px', marginBottom: '16px', fontSize: '0.85rem' }}>
+          <div style={{ background: '#18181b', border: '1px solid var(--border)', color: '#f4f4f5', padding: '10px 14px', borderRadius: '8px', marginBottom: '16px', fontSize: '0.85rem' }}>
             {waitlistMsg}
           </div>
         )}
@@ -76,28 +76,28 @@ export const EventDetailsModal: React.FC<EventDetailsModalProps> = ({ event, onC
         {loading ? (
           <p>Loading schedules...</p>
         ) : schedules.length === 0 ? (
-          <p style={{ fontStyle: 'italic', color: '#64748b' }}>No upcoming schedules published for this event yet.</p>
+          <p style={{ fontStyle: 'italic', color: 'var(--text-dim)' }}>No upcoming schedules published for this event yet.</p>
         ) : (
           <div className="flex flex-col gap-3" style={{ marginBottom: '24px' }}>
             {schedules.map(sch => (
               <div 
                 key={sch.schedule_id} 
                 className="card flex items-center justify-between flex-wrap gap-3"
-                style={{ padding: '16px', background: '#0f172a' }}
+                style={{ padding: '16px', background: 'var(--bg-surface)', borderColor: 'var(--border)' }}
               >
                 <div>
                   <div className="flex items-center gap-2" style={{ fontWeight: 600, color: '#fff', fontSize: '0.95rem', marginBottom: '4px' }}>
-                    <Calendar size={16} color="#818cf8" />
+                    <Calendar size={16} color="#a1a1aa" />
                     <span>{new Date(sch.start_datetime).toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' })}</span>
-                    <Clock size={14} color="#94a3b8" style={{ marginLeft: '6px' }} />
-                    <span style={{ fontSize: '0.82rem', color: '#94a3b8' }}>
+                    <Clock size={14} color="#71717a" style={{ marginLeft: '6px' }} />
+                    <span style={{ fontSize: '0.82rem', color: 'var(--text-dim)' }}>
                       {new Date(sch.start_datetime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                     </span>
                   </div>
-                  <div className="flex items-center gap-2" style={{ fontSize: '0.82rem', color: '#cbd5e1' }}>
-                    <MapPin size={14} color="#10b981" />
+                  <div className="flex items-center gap-2" style={{ fontSize: '0.82rem', color: 'var(--text-muted)' }}>
+                    <MapPin size={14} color="var(--success)" />
                     <span>{sch.venue_name}</span>
-                    <span style={{ color: '#64748b' }}>• Capacity: {sch.capacity}</span>
+                    <span style={{ color: 'var(--text-dim)' }}>• Capacity: {sch.capacity}</span>
                   </div>
                 </div>
 
@@ -125,19 +125,19 @@ export const EventDetailsModal: React.FC<EventDetailsModalProps> = ({ event, onC
         {/* Reviews Section */}
         <h3 style={{ fontSize: '1.1rem', marginBottom: '12px' }}>Customer Reviews ({reviews.length})</h3>
         {reviews.length === 0 ? (
-          <p style={{ fontSize: '0.85rem', color: '#64748b' }}>No reviews yet. Be the first to attend and review!</p>
+          <p style={{ fontSize: '0.85rem', color: 'var(--text-dim)' }}>No reviews yet. Be the first to attend and review!</p>
         ) : (
           <div className="flex flex-col gap-2">
             {reviews.map(r => (
-              <div key={r.review_id} style={{ background: '#0f172a', padding: '12px', borderRadius: '8px', border: '1px solid #334155' }}>
+              <div key={r.review_id} style={{ background: 'var(--bg-surface)', padding: '12px', borderRadius: '8px', border: '1px solid var(--border)' }}>
                 <div className="flex items-center justify-between" style={{ marginBottom: '4px' }}>
-                  <span style={{ fontWeight: 600, fontSize: '0.85rem' }}>{r.customer_name}</span>
+                  <span style={{ fontWeight: 600, fontSize: '0.85rem', color: 'var(--text-main)' }}>{r.customer_name}</span>
                   <div className="flex items-center gap-1" style={{ color: '#fbbf24', fontSize: '0.8rem' }}>
                     <Star size={13} fill="#fbbf24" />
                     <span>{r.rating}/5</span>
                   </div>
                 </div>
-                {r.review_text && <p style={{ fontSize: '0.82rem', color: '#cbd5e1' }}>{r.review_text}</p>}
+                {r.review_text && <p style={{ fontSize: '0.82rem', color: 'var(--text-muted)' }}>{r.review_text}</p>}
               </div>
             ))}
           </div>
